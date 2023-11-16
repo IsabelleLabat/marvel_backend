@@ -10,12 +10,12 @@ const app = express();
 
 router.get("/characters", async (req, res) => {
   try {
-    const { title, sort, limit, skip } = req.query;
+    const { name, sort, limit, skip } = req.query;
 
     let APIkey = `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${process.env.MARVEL_APIKEY}`;
 
     if (title) {
-      APIkey = APIkey + `&title=${title}`;
+      APIkey = APIkey + `&name=${name}`;
     }
     if (sort) {
       APIkey = APIkey + `&sort=${sort}`;
@@ -29,7 +29,9 @@ router.get("/characters", async (req, res) => {
 
     const response = await axios.get(APIkey);
     res.status(200).json({ data: response.data });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 });
 
 router.get("/character/:characterId", async (req, res) => {
