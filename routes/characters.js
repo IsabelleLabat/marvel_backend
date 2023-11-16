@@ -14,7 +14,7 @@ router.get("/characters", async (req, res) => {
 
     let APIkey = `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${process.env.MARVEL_APIKEY}`;
 
-    if (title) {
+    if (name) {
       APIkey = APIkey + `&name=${name}`;
     }
     if (sort) {
