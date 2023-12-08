@@ -2,8 +2,9 @@
 const express = require("express");
 // Appel à la fonction Router(), issue du package 'express'
 const router = express.Router();
-const axios = require("axios");
-const Favorites = require("../models/Favorites");
+// const axios = require("axios");
+const Favorite = require("../models/Favorites");
+const isAuthenticated = require("../middlewares/isAuthenticated");
 
 // const Character = require("../models/Character");
 
@@ -11,18 +12,18 @@ const app = express();
 
 // SAVE FAVORITES
 
-router.post("/favorites", async (req, res) => {
+router.post("/favorites", isAuthenticated, async (req, res) => {
   try {
-    const newFavorites = new Favorites({
+    const newFavorites = new Favorite({
       itemId: req.body.itemId,
-      title: req.body.title,
       name: req.body.name,
       path: req.body.path,
-      exetension: req.body.extension,
+      extension: req.body.extension,
       owner: req.user,
     });
-
+    console.log("coucou");
     await newFavorites.save();
+
     res.status(201).json(newFavorites);
   } catch (error) {
     res.status(500).json({ message: error.response });
@@ -31,9 +32,9 @@ router.post("/favorites", async (req, res) => {
 
 // GET ALL FAVORITES
 
-router.get("/favorites", async (req, res) => {
+router.get("/favorites", isAuthenticated, async (req, res) => {
   try {
-    const favorites = await Favorites.find({ owner: req.user });
+    const favorites = await Favorite.find({ owner: req.user });
     res.status(201).json(favorites);
   } catch (error) {
     res.status(500).json({ message: error.response });
@@ -42,7 +43,7 @@ router.get("/favorites", async (req, res) => {
 
 // DELETE BY ID
 
-router.delete("favorites/:id", async (req, res) => {
+router.delete("favorites/:id", isAuthenticated, async (req, res) => {
   try {
     if (req.params.id) {
       await Favorite.findByIdAndDelete(req.params.id);
